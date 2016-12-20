@@ -121,4 +121,19 @@ class OnlineJudge:
         }
         # Finished construction
         return default_json
+
+    ############################################################################
+    #  User login related
+    ############################################################################
+
+    def login_server(self, username, password):
+        """ Login to server with given username and password. Login status
+        should be saved to local session storage. """
+        return False
+
+    def get_login_status(self):
+        """ Returns if current client is logged into server with the specific
+        tokens in local session storage. """
+        return False
+
     pass
