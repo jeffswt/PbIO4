@@ -1,6 +1,7 @@
 
 import requests
 import storage
+import re
 
 class BZOJ:
     """ 大视野在线测评, Hosted on http://www.lydsy.com/ """
@@ -62,13 +63,24 @@ class BZOJ:
         sessid = req.cookies.get('PHPSESSID', '')
         storage.set(self.engine, 'session_id', sessid)
         # Checking if login works
-        ret = self.get_login_status()
+        ret = self.logged_in()
         return ret
 
     def logout(self):
         return False
 
     def logged_in(self):
+        # Defining pattern, might change from time to time.
+        pattern = r"<th><a href=\./modifypage\.php><b>ModifyUser</b></a>&nbsp;&nbsp;<a href=\'userinfo\.php\?user="
+        # Getting main page for determination
+        url = self.domain
+        sessid = storage.get(self.engine, 'session_id')
+        cookies = { 'PHPSESSID': sessid }
+        req = requests.get(url, cookies=cookies)
+        # Matching with RegEx
+        if re.findall(pattern, req.text):
+            return True
+        # User is not logged in, in my point of view
         return False
 
     def submit_code(self, problem_id, source_code, code_language):
