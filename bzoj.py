@@ -74,6 +74,11 @@ class BZOJ:
         storage.set(self.engine, 'session_id', sessid)
         # Checking if login works
         ret = self.logged_in()
+        # Setting user name into local storage.
+        if ret == True:
+            storage.set(self.engine, 'user_id', username)
+        else:
+            storage.remove(self.engine, 'session_id')
         return ret
 
     def logout(self):
