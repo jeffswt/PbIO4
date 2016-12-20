@@ -64,4 +64,14 @@ class OnlineJudge:
             'note': '',
         }
         raise NotImplementedError()
+
+    def get_objects(self, data):
+        """ This function should return a tuple, representing the modified
+        data containing the new objects' name notation, unified with a list of
+        objects, which must enforce the allowed types specified by the
+        guidelines. """
+        new_data = data
+        new_objects = { }
+        return new_data, new_objects
+
     pass
