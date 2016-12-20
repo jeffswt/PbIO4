@@ -1,4 +1,6 @@
 
+import time
+
 class OnlineJudge:
     """ Default Online Judge template. """
     engine_name = 'Default' # Specify this on class inheritance
@@ -101,7 +103,7 @@ class OnlineJudge:
             'metadata': {
                 'engine': self.engine_name,
                 'id': problem_id,
-                'date_created': '',
+                'time_created': time.strftime('%Y-%m-%dT%H:%M:%S', time.gmtime()),
                 'tags': {
                     'title': split_data.get('tags',{}).get('title', 'Untitled'),
                     'time_limit': split_data.get('tags',{}).get('time_limit', 1.0),
