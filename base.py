@@ -23,17 +23,10 @@ class OnlineJudge:
         """ This divides the raw data into several chunks of raw data and
         may reduce the burden of working on data, afterwards. The interchange
         format can be specified by the engine itself, since it does not require
-        global compatibility. """
-        raise NotImplementedError()
+        global compatibility.
 
-    def get_metadata(self, data):
-        """ This gets the metadata, as in json_data.metadata.data. Return values
-        must strictly follow the guidelines. """
-        metadata = {
-            'title': 'Unknown title',
-            'time_limit': 1.0,
-            'memory_limit': 67108864,
-        }
+        This procedure should also filter out the metadata for the problem,
+        as inserted in result.tags.*. """
         raise NotImplementedError()
 
     def get_description_markdown(self, data):
