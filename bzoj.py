@@ -67,7 +67,14 @@ class BZOJ:
         return ret
 
     def logout(self):
-        return False
+        # Sending request to remote.
+        url = self.domain + 'logout.php'
+        sessid = storage.get(self.engine, 'session_id')
+        cookies = { 'PHPSESSID': sessid }
+        req = requests.get(url, cookies=cookies)
+        # Removing session ID from local storage
+        storage.remove(self.engine, 'session_id')
+        return True
 
     def logged_in(self):
         # Defining pattern, might change from time to time.
