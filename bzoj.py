@@ -1,4 +1,7 @@
 
+import requests
+import storage
+
 class BZOJ:
     """ 大视野在线测评, Hosted on http://www.lydsy.com/ """
     engine = 'BZOJ'
@@ -46,11 +49,25 @@ class BZOJ:
         return new_data, new_objects
 
     def login_server(self, username, password):
-        return False
+        # Setting initial data.
+        url = self.domain + 'login.php'
+        data = {
+            'user_id': username,
+            'password': password,
+            'submit': 'Submit',
+        }
+        # Requesting, without previous session ID
+        req = requests.post(url, data=data)
+        # Retrieving and setting session ID.
+        sessid = req.cookies.get('PHPSESSID', '')
+        storage.set(self.engine, 'session_id', sessid)
+        # Checking if login works
+        ret = self.get_login_status()
+        return ret
 
     def logout_server(self):
         return False
-    
+
     def get_login_status(self):
         return False
 
