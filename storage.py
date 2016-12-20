@@ -75,3 +75,13 @@ def set(engine_id, key, data):
     __storage_index[engine_id][key] = data
     flush_storage()
     return
+
+def remove(engine_id, key):
+    """ remove(engine_id, key) -- Remove 'key' from local session storage for
+    given engine. """
+    if not __storage_index:
+        load_storage()
+    if engine_id in __storage_index:
+        if key in __storage_index[engine_id]:
+            del __storage_index[engine_id][key]
+    return
