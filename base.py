@@ -1,6 +1,7 @@
 
 class OnlineJudge:
     """ Default Online Judge template. """
+    engine_name = 'Default' # Specify this on class inheritance
 
     def __init__(self):
         self.domain = 'http://example.com/'
@@ -74,4 +75,42 @@ class OnlineJudge:
         new_objects = { }
         return new_data, new_objects
 
+    def get_problem_json(self, problem_id):
+        """ Retrieves a json of problem description, not compressed. Returns a
+        standardized object notation, composed of dict() and list().
+
+        This function **SHOULD NOT BE OVERRIDDEN**!"""
+        # Getting raw data from server
+        raw_data = self.get_raw_problem_data()
+        # Retrieving objects
+        raw_data, objects = self.get_objects(objects)
+        # Splitting data into separate objects
+        split_data = self.split_raw_problem_data(raw_data)
+        # Rendering raw data to different languages
+        dat_md = self.get_description_markdown(split_data)
+        dat_ltx = self.get_description_latex(split_data)
+        dat_h5 = self.get_description_html5(split_data)
+        # Building objected output
+        default_json = {
+            'metadata': {
+                'engine': self.engine,
+                'id': problem_id,
+                'date_created': '',
+                'tags': {
+                    'title': split_data['tags'].get('title', 'Untitled'),
+                    'time_limit': split_data['tags'].get('time_limit', 1.0),
+                    'memory_limit': split_data['memory_limit'].get('memory_limit', 67108864),
+                },
+            },
+            'problem': {
+                'Markdown': dat_md,
+                'LaTeX': dat_ltx,
+                'HTML5': dat_h5,
+                'HTML': raw_data,
+            },
+            'sample_data': split_data.get('sample_data', []),
+            'objects': objects,
+        }
+        # Finished construction
+        return default_json
     pass
