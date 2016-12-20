@@ -3,7 +3,7 @@ import time
 
 class OnlineJudge:
     """ Default Online Judge template. """
-    engine_name = 'Default' # Specify this on class inheritance
+    engine = 'Default' # Specify this on class inheritance
 
     def __init__(self):
         self.domain = 'http://example.com/'
@@ -98,7 +98,7 @@ class OnlineJudge:
         # Building objected output
         default_json = {
             'metadata': {
-                'engine': self.engine_name,
+                'engine': self.engine,
                 'id': problem_id,
                 'time_created': time.strftime('%Y-%m-%dT%H:%M:%S', time.gmtime()),
                 'tags': {

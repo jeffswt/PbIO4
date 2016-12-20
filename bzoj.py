@@ -1,7 +1,7 @@
 
 class BZOJ:
     """ 大视野在线测评, Hosted on http://www.lydsy.com/ """
-    engine_name = 'BZOJ'
+    engine = 'BZOJ'
 
     def __init__(self):
         self.domain = 'http://www.lydsy.com/JudgeOnline/'
