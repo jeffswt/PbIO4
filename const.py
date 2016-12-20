@@ -43,7 +43,7 @@ default_json = {
         # 'id': 'Contest.746.A',
         # 'id': 'Gym.101026.A',
         'date_created': '2016-11-19T08:00:00+08:00' # Comply to ISO-8601 standards
-        'data': {
+        'tags': {
             'title': 'Codeforces Round #386 (Div. 2) - A. Compote',
             'time_limit': 1.0, # In seconds
             'memory_limit': 268435456, # In bytes
