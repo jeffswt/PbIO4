@@ -72,7 +72,7 @@ class OnlineJudge:
         objects, which must enforce the allowed types specified by the
         guidelines. """
         new_data = data
-        new_objects = { }
+        new_objects = []
         return new_data, new_objects
 
     def get_problem_json(self, problem_id):
@@ -81,25 +81,31 @@ class OnlineJudge:
 
         This function **SHOULD NOT BE OVERRIDDEN**!"""
         # Getting raw data from server
-        raw_data = self.get_raw_problem_data()
+        raw_data = self.get_raw_problem_data(problem_id) or ''
         # Retrieving objects
-        raw_data, objects = self.get_objects(objects)
+        raw_data, objects = self.get_objects(raw_data)
         # Splitting data into separate objects
-        split_data = self.split_raw_problem_data(raw_data)
+        split_data = self.split_raw_problem_data(raw_data) or {}
         # Rendering raw data to different languages
-        dat_md = self.get_description_markdown(split_data)
-        dat_ltx = self.get_description_latex(split_data)
-        dat_h5 = self.get_description_html5(split_data)
+        dat_empty = {
+            'description': '',
+            'input': '',
+            'output': '',
+            'note': '',
+        }
+        dat_md = self.get_description_markdown(split_data) or dat_empty
+        dat_ltx = self.get_description_latex(split_data) or dat_empty
+        dat_h5 = self.get_description_html5(split_data) or dat_empty
         # Building objected output
         default_json = {
             'metadata': {
-                'engine': self.engine,
+                'engine': self.engine_name,
                 'id': problem_id,
                 'date_created': '',
                 'tags': {
-                    'title': split_data['tags'].get('title', 'Untitled'),
-                    'time_limit': split_data['tags'].get('time_limit', 1.0),
-                    'memory_limit': split_data['memory_limit'].get('memory_limit', 67108864),
+                    'title': split_data.get('tags',{}).get('title', 'Untitled'),
+                    'time_limit': split_data.get('tags',{}).get('time_limit', 1.0),
+                    'memory_limit': split_data.get('tags',{}).get('memory_limit', 67108864),
                 },
             },
             'problem': {
