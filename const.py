@@ -94,3 +94,20 @@ default_json = {
         },
     ],
 }
+
+# Supported submission status types
+submission_status_types = [
+    # Idle or status codes
+    'Pending'
+    'Compiling',
+    'Running',
+    # Judge results
+    'Accepted',
+    'Presentation Error',
+    'Wrong Answer',
+    'Time Limit Exceeded',
+    'Memory Limit Exceeded',
+    'Output Limit Exceeded',
+    # On special judges only
+    'Hacked',
+]

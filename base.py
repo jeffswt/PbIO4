@@ -9,6 +9,10 @@ class OnlineJudge:
         self.domain = 'http://example.com/'
         return
 
+    ############################################################################
+    #  Problems related
+    ############################################################################
+
     def get_raw_problem_data(self, problem_id):
         """ Gets problem data from remote server, without further processing.
         This returns the raw data as is from the server, without modifying the
@@ -136,4 +140,17 @@ class OnlineJudge:
         tokens in local session storage. """
         return False
 
+    ############################################################################
+    #  Submissions related
+    ############################################################################
+
+    def submit_code(self, problem_id, source_code, code_language):
+        """ Submits code to remote server, and returns the handle to this
+        specif submission, if remote server supports this function. """
+        raise NotImplementedError()
+
+    def get_submission_status(self, submission_token):
+        """ Returns a valid submission status, as defined in the guidelines.
+        Must pass in a valid submission token. """
+        raise NotImplementedError()
     pass
