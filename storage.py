@@ -44,12 +44,34 @@ def get(engine_id):
     """ get(engine_id) -- Retrieve local storage for given engine. """
     if not __storage_index:
         load_storage()
-    data = copy.deepcopy(__storage_index[engine_id])
+    data = copy.deepcopy(__storage_index.get(engine_id, {}))
     return data
 
 def set(engine_id, data):
-    """ set(engine_id) -- Set local storage data for given engine. """
+    """ set(engine_id, data) -- Set local storage data for given engine. """
     if not __storage_index:
         load_storage()
     __storage_index[engine_id] = copy.deepcopy(data)
     flush_storage()
+    return
+
+def get(engine_id, key):
+    """ get(engine_id, key) -- Retrieve data 'key' from local storage for given
+    engine. """
+    if not __storage_index:
+        load_storage()
+    data = __storage_index.get(engine_id, {}).get(key)
+    data = copy.deepcopy(data)
+    return data
+
+def set(engine_id, key, data):
+    """ set(engine_id, key, data) -- Set local storage data for 'key' for given
+    engine. """
+    if not __storage_index:
+        load_storage()
+    data = copy.deepcopy(data)
+    if engine_id not in __storage_index:
+        __storage_index[engine_id] = {}
+    __storage_index[engine_id][key] = data
+    flush_storage()
+    return
