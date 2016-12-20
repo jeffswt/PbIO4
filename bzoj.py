@@ -48,7 +48,7 @@ class BZOJ:
         new_objects = []
         return new_data, new_objects
 
-    def login_server(self, username, password):
+    def login(self, username, password):
         # Setting initial data.
         url = self.domain + 'login.php'
         data = {
@@ -65,10 +65,10 @@ class BZOJ:
         ret = self.get_login_status()
         return ret
 
-    def logout_server(self):
+    def logout(self):
         return False
 
-    def get_login_status(self):
+    def logged_in(self):
         return False
 
     def submit_code(self, problem_id, source_code, code_language):

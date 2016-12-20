@@ -123,17 +123,17 @@ class OnlineJudge:
     #  User login related
     ############################################################################
 
-    def login_server(self, username, password):
+    def login(self, username, password):
         """ Login to server with given username and password. Login status
         should be saved to local session storage. """
         return False
 
-    def logout_server(self):
+    def logout(self):
         """ Logout from server. Previous data should be removed from local
         session storage. """
         return False
 
-    def get_login_status(self):
+    def logged_in(self):
         """ Returns if current client is logged into server with the specific
         tokens in local session storage. """
         return False
