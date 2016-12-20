@@ -51,26 +51,26 @@ default_json = {
     },
     'problem': {
         # GitHub flavoured Markdown, without line-end breaks. Support MathJax extensions.
-        'Markdown': [
+        'Markdown': {
             'description': '# Lorem Ipsum\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
             'input': 'The **first line** contains the positive integer $a (1 \\leq a \\leq 1000)$ - the number of lemons Nikolay has.',
             'output': 'Print *the maximum* total number of lemons, apples and pears from which Nikolay can cook the compote.',
             'note': 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-        ],
+        },
         # Must be compilable with XeLaTeX or LuaLaTeX, and must be Unicode-compatible.
-        'LaTeX': [
+        'LaTeX': {
             'description': '\\subsection{Lorem Ipsum}\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
             'input': 'The \\textbf{first line} contains the positive integer $a (1 \\leq a \\leq 1000)$ - the number of lemons Nikolay has.',
             'output': 'Print \\textit{the maximum} total number of lemons, apples and pears from which Nikolay can cook the compote.',
             'note': 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-        ],
+        },
         # Use MathJax extension for math displays
-        'HTML5': [
+        'HTML5': {
             'description': '<h2>Lorem Ipsum</h2><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>',
             'input': '<p>The <b>first line</b> contains the positive integer <span class="math inline">a (1 \\leq a \\leq 1000)</span> - the number of lemons Nikolay has. </p>',
             'output': '<p>Print <i>the maximum</i> total number of lemons, apples and pears from which Nikolay can cook the compote.</p>',
             'note': '<p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>',
-        ],
+        },
         # Directly stripped off the entire context from online judge. If was
         # converted from LaTeX or Markdown, this can be the same as HTML5, but
         # a combined one.
