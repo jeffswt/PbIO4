@@ -89,6 +89,7 @@ class BZOJ:
         req = requests.get(url, cookies=cookies)
         # Removing session ID from local storage
         storage.remove(self.engine, 'session_id')
+        storage.remove(self.engine, 'user_id')
         return True
 
     def logged_in(self):
@@ -137,8 +138,21 @@ class BZOJ:
         if req.status_code != 302:
             raise PermissionError('Problem submission for problem "%s" failed.' % problem_id)
         # Successfully submitted problem.
-        # TODO: Getting submission token.
-        return True
+        # Getting submission token.
+        userid = storage.get(self.engine, 'user_id')
+        url = self.domain + 'status.php?user_id=%s' % userid
+        # WARNING: THIS PROCEDURE WOULD BE MALFUNCTIONING IF YOU ARE SUBMITTING
+        # A LARGE AMOUNT OF CODE MEANWHILE, WHICH IN THIS CASE YOU WOULDN'T BE
+        # ABLE TO SINCE THE TIME LIMIT IS 1 SUBMISSION PER 10 SECONDS. THEREFORE
+        # THIS PROCEDURE HAS MERELY A SLIGHT CHANCE OF BREAKING.
+        req = requests.get(url, cookies=cookies)
+        pattern = r'^<tr align=center class=\'evenrow\'><td>(\d*?)<td>'
+        sub_id = re.findall(pattern, req.text, re.M)
+        if len(sub_id) > 0:
+            sub_id = int(sub_id[0])
+        else:
+            raise RuntimeError('Unable to retrieve submission token for problem submission.')
+        return sub_id
 
     def get_submission_status(self, submission_token):
         raise NotImplementedError()
