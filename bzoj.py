@@ -48,6 +48,9 @@ class BZOJ:
     def login_server(self, username, password):
         return False
 
+    def logout_server(self):
+        return False
+    
     def get_login_status(self):
         return False
 

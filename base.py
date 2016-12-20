@@ -128,6 +128,11 @@ class OnlineJudge:
         should be saved to local session storage. """
         return False
 
+    def logout_server(self):
+        """ Logout from server. Previous data should be removed from local
+        session storage. """
+        return False
+
     def get_login_status(self):
         """ Returns if current client is logged into server with the specific
         tokens in local session storage. """
