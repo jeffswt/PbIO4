@@ -196,6 +196,35 @@ class BZOJ:
         return sub_id
 
     def get_submission_status(self, submission_token):
-
+        # Converting submission token.
+        convert_fail = False
+        try:
+            submission_token = int(submission_token)
+        except Exception as err:
+            convert_fail = True
+        if convert_fail or submission_token < 1000:
+            raise ValueError('The submission token is invalid.')
+        # Requesting status.
+        url = self.domain + 'status.php?top=%d' % submission_token
+        sessid = storage.get(self.engine, 'session_id')
+        cookies = { 'PHPSESSID': sessid }
+        # Safely request to remote server
+        connection_established = True
+        try:
+            req = requests.get(url, cookies=cookies, timeout=self.default_timeout)
+        except Exception as err:
+            connection_established = False
+        if not connection_established:
+            raise IOError('Remote server is unreachable.')
+        # Matching values
+        pattern = r'^<tr align=center class=\'evenrow\'><td>(.*?)<td><a href=\'userinfo\.php\?user=.*?\'>(.*?)</a><td><a href=\'problem\.php\?id=.*?\'>(.*?)</a><td>(.*?)<td>(.*?)<td>(.*?)<td>(.*?)<td>(.*?) B<td>(.*?)</tr>'
+        match = re.findall(pattern, req.text, re.M)
+        # Checking submission token validity
+        if len(match) <= 0:
+            raise ValueError('The submission token is invalid.')
+        match = list(match[0])
+        if int(match[0]) < submission_token:
+            raise ValueError('The submission token is invalid.')
+        # Generating result
         raise NotImplementedError()
     pass
