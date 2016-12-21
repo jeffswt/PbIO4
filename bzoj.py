@@ -269,4 +269,26 @@ class BZOJ:
         else:
             status = status_map[match[3]]
         result['status'] = status
+        # Retrieving source code
+        if result['username'] == storage.get(self.engine, 'user_id'):
+            url = self.domain + 'submitpage.php?id=%s&sid=%d' % (result['problem_id'], submission_token)
+            sessid = storage.get(self.engine, 'session_id')
+            cookies = { 'PHPSESSID': sessid }
+            # Safely request to remote server
+            connection_established = True
+            try:
+                req = requests.get(url, cookies=cookies, timeout=self.default_timeout)
+            except Exception as err:
+                connection_established = False
+            if not connection_established:
+                raise IOError('Remote server is unreachable.')
+            # Retrieve CE info
+            code = re.findall(r'<textarea.*?>(.*?)</textarea>', req.text)
+            if len(code) <= 0:
+                code = ''
+            else:
+                code = code[0]
+            result['code'] = code
+        print(result)
+        # raise NotImplementedError()
     pass
