@@ -25,7 +25,32 @@ class BZOJ:
         return problem_id
 
     def get_raw_problem_data(self, problem_id):
-        raise NotImplementedError()
+        problem_id = self.check_problem_id(problem_id)
+        # Just requesting data
+        url = self.domain + 'problem.php?id=%d' % problem_id
+        sessid = storage.get(self.engine, 'session_id')
+        if sessid:
+            cookies = { 'PHPSESSID': sessid }
+        else:
+            cookies = { }
+        # Safely request to remote server
+        connection_established = True
+        try:
+            req = requests.get(url, cookies=cookies, timeout=self.default_timeout)
+            req.encoding = 'utf-8'
+        except Exception as err:
+            connection_established = False
+        if not connection_established:
+            raise IOError('Remote server is unreachable.')
+        # Matching valid section of the webpage.
+        def consq_sub(text, *args):
+            for i in range(0, int(len(args) / 2)):
+                text = re.sub(args[i*2], args[i*2+1], text)
+            return text
+        text = consq_sub(req.text,
+            r'\r', r'', # Remove inproper line endings
+            r'\n[ \t]*', r'\n')
+        return text
 
     def split_raw_problem_data(self, raw_data):
         raise NotImplementedError()
