@@ -73,7 +73,7 @@ class BZOJ:
         connection_established = True
         try:
             req = requests.post(url, data=data, timeout=self.default_timeout)
-        except requests.exceptions.ConnectionError as err:
+        except Exception as err:
             connection_established = False
         if not connection_established:
             raise IOError('Remote server is unreachable.')
@@ -100,7 +100,7 @@ class BZOJ:
         connection_established = True
         try:
             req = requests.get(url, cookies=cookies, timeout=self.default_timeout)
-        except requests.exceptions.ConnectionError as err:
+        except Exception as err:
             connection_established = False
         if not connection_established:
             raise IOError('Remote server is unreachable.')
@@ -111,7 +111,7 @@ class BZOJ:
 
     def logged_in(self):
         # Defining pattern, might change from time to time.
-        pattern = r"<th><a href=\./modifypage\.php><b>ModifyUser</b></a>&nbsp;&nbsp;<a href=\'userinfo\.php\?user="
+        pattern = r'<th><a href=\./modifypage\.php><b>ModifyUser</b></a>&nbsp;&nbsp;<a href=\'userinfo\.php\?user='
         # Getting main page for determination
         url = self.domain
         sessid = storage.get(self.engine, 'session_id')
@@ -120,7 +120,7 @@ class BZOJ:
         connection_established = True
         try:
             req = requests.get(url, cookies=cookies, timeout=self.default_timeout)
-        except requests.exceptions.ConnectionError as err:
+        except Exception as err:
             connection_established = False
         if not connection_established:
             raise IOError('Remote server is unreachable.')
@@ -161,7 +161,7 @@ class BZOJ:
         try:
             req = requests.post(url, cookies=cookies, data=data,
                 allow_redirects=False, timeout=self.default_timeout)
-        except requests.exceptions.ConnectionError as err:
+        except Exception as err:
             connection_established = False
         if not connection_established:
             raise IOError('Remote server is unreachable.')
