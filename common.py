@@ -26,6 +26,16 @@ def consq_sub(text, *args):
             raise TypeError('Error while subtituting string: "%s" -> "%s" in "%s"' % (args[i*2], args[i*2+1], text))
     return text
 
+def get_string_width(text):
+    b = text.encode('utf-8', 'ignore')
+    res = 0
+    for i in b:
+        if int(i) < 128:
+            res += 1
+        else:
+            res += 1
+    return res
+
 def sha256(binary_in):
     if type(binary_in) == str:
         binary_in = binary_in.encode('utf-8')

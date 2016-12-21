@@ -76,7 +76,7 @@ class BZOJ(base.OnlineJudge):
         desc = common.findone(r'<h2>Description</h2><div class=content>(.*?)</div><h2>', raw_data, flags=re.S)
         inp = common.findone(r'<h2>Input</h2><div class=content>(.*?)</div><h2>', raw_data, flags=re.S)
         outp = common.findone(r'<h2>Output</h2><div class=content>(.*?)</div><h2>', raw_data, flags=re.S)
-        note = common.findone(r'<h2>HINT</h2><div class=content>(.*?)</div><h2>', raw_data, flags=re.S)
+        note = common.findone(r'<h2>HINT</h2>.*?<div class=content>(.*?)</div><h2>', raw_data, flags=re.S)
         # Building output
         result = {
             'tags': {
@@ -115,6 +115,15 @@ class BZOJ(base.OnlineJudge):
             )
             # Manipulate the rest in bs4
             bs = bs4.BeautifulSoup(data or '', 'html5lib')
+            # Removing abstruse formats
+            for span in bs.find_all('span'):
+                if 'font' not in span['style'] and 'color' not in span['style']:
+                    continue
+                found = True
+                for i in span.children:
+                    i.extract()
+                    span.insert_before(i)
+                span.extract()
             # Removing line-end breaks
             find_brs = bs.find_all('br')
             for cur_brk in find_brs:
