@@ -1,4 +1,5 @@
 
+import binascii
 import time
 
 class OnlineJudge:
@@ -83,6 +84,10 @@ class OnlineJudge:
         raw_data = self.get_raw_problem_data(problem_id) or ''
         # Retrieving objects
         raw_data, objects = self.get_objects(raw_data)
+        for i in range(0, len(objects)):
+            j = objects[i]
+            j['data'] = binascii.hexlify(j['data']).decode('utf-8')
+            objects[i] = j
         # Splitting data into separate objects
         split_data = self.split_raw_problem_data(raw_data) or {}
         # Rendering raw data to different languages
