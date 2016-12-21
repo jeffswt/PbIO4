@@ -263,7 +263,9 @@ class BZOJ:
             'Presentation_Error': ('Presentation Error', 'Presentation Error.'),
             'Accepted': ('Accepted', 'Accepted!'),
         }
-        match[3] = re.sub(r'<.*?>(.*?)</.*?>', r'\1', match[3])
+        match[3] = re.sub(r'<font color=.*?>(.*?)</font>', r'\1', match[3])
+        if 'Compile_Error' in match[3]:
+            match[3] = re.sub(r'<a href=.*?>(.*?)</a>', r'\1', match[3])
         if match[3] not in status_map:
             status = 'Unknown'
         else:
@@ -282,7 +284,7 @@ class BZOJ:
                 if not connection_established:
                     raise IOError('Remote server is unreachable.')
                 # Retrieve CE info
-                ce_info = re.findall(r'<pre>(.*?)</pre>', req.text)
+                ce_info = re.findall(r'<pre>(.*?)</pre>', req.text, re.S)
                 if len(ce_info) <= 0:
                     ce_info = ''
                 else:
@@ -306,12 +308,12 @@ class BZOJ:
             if not connection_established:
                 raise IOError('Remote server is unreachable.')
             # Retrieve CE info
-            code = re.findall(r'<textarea.*?>(.*?)</textarea>', req.text)
+            code = re.findall(r'<textarea.*?>(.*?)</textarea>', req.text, re.S)
             if len(code) <= 0:
                 code = ''
             else:
                 code = code[0]
             result['code'] = code
-        print(result)
-        # raise NotImplementedError()
+        # Submission status retrieval succeeded.
+        return result
     pass
