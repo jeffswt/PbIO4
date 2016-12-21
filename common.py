@@ -1,6 +1,9 @@
 
 import binascii
 import hashlib
+import io
+import PIL
+import PIL.Image
 import re
 import requests
 
@@ -11,8 +14,10 @@ def findone(pattern, string, otherwise=None, flags=0):
     return match[0]
 
 def sha256(binary_in):
+    if type(binary_in) == str:
+        binary_in = binary_in.encode('utf-8')
     digest = hashlib.sha256(binary_in).digest()
-    asc = binascii.hexlify(digest).encode('utf-8')
+    asc = binascii.hexlify(digest).decode('utf-8')
     return asc
 
 requests_session = requests.Session()
@@ -36,3 +41,12 @@ def request(function, *args, encoding='utf-8', **kwargs):
     if not connection_established:
         raise IOError('Remote server is unreachable.')
     return req
+
+def convert_image(data):
+    hfile = io.BytesIO(data)
+    himage = PIL.Image.open(hfile)
+    hfileout = io.BytesIO()
+    himage.save(hfileout, format='png')
+    hfileout.seek(0)
+    out = hfileout.read()
+    return out
