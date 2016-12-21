@@ -167,7 +167,17 @@ class BZOJ:
             raise IOError('Remote server is unreachable.')
         # Checking if successfully submitted
         if req.status_code != 302:
-            raise PermissionError('Problem submission for problem "%s" failed.' % problem_id)
+            # Retrieve error information
+            pattern = r'^(.*?>)[^>]+<br>\r\n'
+            match = re.findall(pattern, req.text, re.M)
+            if len(match) > 0:
+                if match[0] == 'You should not submit more than twice in 10 seconds.....<br>':
+                    raise PermissionError('Your submission is too frequent.')
+                elif match[0] == '<a href=\'loginpage.php\'>Please Login First!</a>':
+                    raise PermissionError('You need to login before you could make any submissions.')
+                else:
+                    pass
+            raise PermissionError('Problem submission failed (reason unknown).')
         # Successfully submitted problem.
         # Getting submission token.
         userid = storage.get(self.engine, 'user_id')
