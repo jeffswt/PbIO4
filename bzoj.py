@@ -248,4 +248,25 @@ class BZOJ:
         match[6] = re.sub(r'<a target=_blank href=showsource\.php\?id=.*?>(.*?)</a>/<a target=_self href=\"submitpage\.php\?id=.*?&sid=.*?\">Edit</a>',
             r'\1', match[6])
         result['code_language'] = lang_map[match[6]]
+        # Processing status code
+        status_map = {
+            'Pending': ('Pending', 'Pending for judging.'),
+            'Pending_Rejudging': ('Pending', 'Pending forr rejudging.'),
+            'Compiling': ('Compiling', 'Compiling...'),
+            'Running_&_Judging': ('Running', 'Running and judging...'),
+            'Compile_Error': ('Compile Error', ''), # Needs to be further processed
+            'Runtime_Error': ('Runtime Error', 'Runtime Error.'),
+            'Time_Limit_Exceed': ('Time Limit Exceeded', 'Time Limit Exceeded'),
+            'Memory_Limit_Exceed': ('Memory Limit Exceeded', 'Memory Limit Exceeded'),
+            'Output_Limit_Exceed': ('Output Limit Exceeded', 'Output Limit Exceeded'),
+            'Wrong_Answer': ('Wrong Answer', 'Wrong Answer.'),
+            'Presentation_Error': ('Presentation Error', 'Presentation Error.'),
+            'Accepted': ('Accepted', 'Accepted!'),
+        }
+        match[3] = re.sub(r'<.*?>(.*?)</.*?>', r'\1', match[3])
+        if match[3] not in status_map:
+            status = 'Unknown'
+        else:
+            status = status_map[match[3]]
+        result['status'] = status
     pass
