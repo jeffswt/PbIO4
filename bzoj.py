@@ -160,6 +160,20 @@ class BZOJ(base.OnlineJudge):
                         cur_block.insert_before(str(match_res))
                         continue
                     # Is really a math object. Processing.
+                    match_res = common.consq_sub(match_res,
+                        '>=', r' \\geq ',
+                        '<=', r' \\leq ',
+                        '>', r' \\gt ',
+                        '<', r' \\lt ',
+                        '≈', r' \\approx ',
+                        r'\*', r' \\times ',
+                        r'\^([0-9a-zA-Z_])', r'^{\1}',
+                        r'(\.\.\.+)', r' \\ldots ',
+                        r'([+\-=])', r' \1 ',
+                        r'^(.*)$', r' \1 ', # Making extra space at beginning.
+                        r'[ ]+', ' ', # Removing places with too much spaces
+                        r'^ (.*) $', r'\1', # Removing extra space at ends
+                    )
                     # Inserting before this block.
                     n_tag = bs.new_tag('span', **{'class': 'math inline'})
                     n_tag.string = match_res
@@ -167,8 +181,15 @@ class BZOJ(base.OnlineJudge):
                     pass
                 # Removing this blob.
                 cur_block.extract()
-                print(o_spl)
+                pass
+            # Removing line breaks
+            for s_str in bs.find_all(string=re.compile(r'.*')):
+                s_str.string = re.sub(r'\n', r'', s_str.string)
             # Prettify output
+            data = '\n'.join(str(i) for i in bs.body.find_all('p'))
+            data = data.replace('\n', '').replace('<br/>', '</p><p>')
+            # Re-work in bs4 and re-write output.
+            bs = bs4.BeautifulSoup(data, 'html5lib')
             data = '\n'.join(str(i) for i in bs.body.find_all('p'))
             # print(data)
             return data
