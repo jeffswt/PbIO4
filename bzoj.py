@@ -10,16 +10,21 @@ class BZOJ:
     engine = 'BZOJ'
     default_timeout = 3.0
 
-    def __init__(self):
+    def __init__(self, bypass_proxy=False):
         self.domain = 'http://www.lydsy.com/JudgeOnline/'
+        self.session = requests.Session()
+        if bypass_proxy:
+            self.session.trust_env = False
         return
 
     def request(self, function, *args, **kwargs):
         connection_established = True
         if function.lower() == 'get':
-            function = requests.get
+            function = self.session.get
         elif function.lower() == 'post':
-            function = requests.post
+            function = self.session.post
+        else:
+            raise ValueError('Unsupported HTML operation.')
         try:
             req = function(*args, **kwargs, timeout=self.default_timeout,
                 headers={ 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0' })
@@ -57,7 +62,12 @@ class BZOJ:
             return text
         text = consq_sub(req.text,
             r'\r', r'', # Remove inproper line endings
-            r'\n[ \t]*', r'\n')
+            r'\n[ \t]*', r'\n', # Remove padding before line
+        ) # Subsequently remove those.
+        # Remove the end
+        text = re.sub(r'<div class=content><p><a href=.*?\[<a href=\'bbs\.php\?id=.*?\'>Discuss</a>\](.|\n)*$', r'', text)
+        # Remove the beginning
+        text = re.sub(r'^(.|\n)*<title>.*?</title>', r'', text)
         return text
 
     def split_raw_problem_data(self, raw_data):
@@ -304,3 +314,9 @@ class BZOJ:
         # Submission status retrieval succeeded.
         return result
     pass
+
+b = BZOJ()
+s = b.get_raw_problem_data(1010)
+f = open('a.html', 'w', encoding='utf8')
+f.write(s)
+f.close()
