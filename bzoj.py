@@ -268,6 +268,29 @@ class BZOJ:
             status = 'Unknown'
         else:
             status = status_map[match[3]]
+        if status[0] == 'Compile Error':
+            if result['username'] == storage.get(self.engine, 'user_id'):
+                url = self.domain + 'ceinfo.php?sid=%d' % submission_token
+                sessid = storage.get(self.engine, 'session_id')
+                cookies = { 'PHPSESSID': sessid }
+                # Safely request to remote server
+                connection_established = True
+                try:
+                    req = requests.get(url, cookies=cookies, timeout=self.default_timeout)
+                except Exception as err:
+                    connection_established = False
+                if not connection_established:
+                    raise IOError('Remote server is unreachable.')
+                # Retrieve CE info
+                ce_info = re.findall(r'<pre>(.*?)</pre>', req.text)
+                if len(ce_info) <= 0:
+                    ce_info = ''
+                else:
+                    ce_info = ce_info[0]
+                status = ('Compile Error', ce_info)
+            else:
+                status = ('Compile Error', 'Compile Error')
+            pass
         result['status'] = status
         # Retrieving source code
         if result['username'] == storage.get(self.engine, 'user_id'):
