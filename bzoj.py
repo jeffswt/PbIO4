@@ -120,6 +120,26 @@ class BZOJ(base.OnlineJudge):
             for cur_block in sat_strs:
                 r_pat = re.compile(r'(%s+)' % m_char)
                 o_spl = r_pat.split(cur_block)
+                for i in range(0, len(o_spl)):
+                    match_res = o_spl[i]
+                    # Determining if it really was a math object
+                    is_math = True
+                    if i % 2 == 0:
+                        is_math = False
+                    if is_math:
+                        is_math = False
+                        for j in match_res:
+                            if j not in m_only_char:
+                                is_math = True
+                    if not is_math:
+                        cur_block.insert_before(str(match_res))
+                        continue
+                    # Is really a math object. Processing.
+                    # Inserting before this block.
+                    n_tag = bs.new_tag('span', **{'class': 'math inline'})
+                    n_tag.string = match_res
+                    cur_block.insert_before(n_tag)
+                    pass
                 # Removing this blob.
                 cur_block.extract()
                 print(o_spl)
@@ -134,7 +154,6 @@ class BZOJ(base.OnlineJudge):
             'note': h5_process(data['note']),
         }
         return description
-        raise NotImplementedError()
 
     def get_description_markdown(self, data, h5_data):
         description = {
