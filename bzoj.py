@@ -21,7 +21,8 @@ class BZOJ:
         elif function.lower() == 'post':
             function = requests.post
         try:
-            req = function(*args, **kwargs, timeout=self.default_timeout)
+            req = function(*args, **kwargs, timeout=self.default_timeout,
+                headers={ 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0' })
             req.encoding = 'utf-8'
         except Exception as err:
             connection_established = False
@@ -95,6 +96,11 @@ class BZOJ:
         return new_data, new_objects
 
     def login(self, username, password):
+        # Retrieving session ID.
+        url = self.domain + 'loginpage.php'
+        req = self.request('get', url, cookies={'PHPSESSID': ''})
+        sessid = req.cookies.get('PHPSESSID', '')
+        storage.set(self.engine, 'session_id', sessid)
         # Setting initial data.
         url = self.domain + 'login.php'
         data = {
@@ -102,11 +108,9 @@ class BZOJ:
             'password': password,
             'submit': 'Submit',
         }
-        # Requesting, without previous session ID
-        req = self.request('post', url, data=data)
-        # Retrieving and setting session ID.
-        sessid = req.cookies.get('PHPSESSID', '')
-        storage.set(self.engine, 'session_id', sessid)
+        # Requesting, with retrieved session ID
+        cookies = { 'PHPSESSID': sessid }
+        req = self.request('post', url, cookies=cookies, data=data)
         # Checking if login works
         ret = self.logged_in()
         # Setting user name into local storage.
