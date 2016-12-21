@@ -1,11 +1,13 @@
 
 import datetime
 import re
-import storage
 import time
+
+import base
+import storage
 import common
 
-class BZOJ:
+class BZOJ(base.OnlineJudge):
     """ 大视野在线测评, Hosted on http://www.lydsy.com/ """
     engine = 'BZOJ'
 
@@ -89,6 +91,16 @@ class BZOJ:
         # Finished building, returning result
         return result
 
+    def get_description_html5(self, data):
+        description = {
+            'description': '',
+            'input': '',
+            'output': '',
+            'note': '',
+        }
+        return description
+        raise NotImplementedError()
+
     def get_description_markdown(self, data, h5_data):
         description = {
             'description': '',
@@ -96,6 +108,7 @@ class BZOJ:
             'output': '',
             'note': '',
         }
+        return description
         raise NotImplementedError()
 
     def get_description_latex(self, data, h5_data):
@@ -105,15 +118,7 @@ class BZOJ:
             'output': '',
             'note': '',
         }
-        raise NotImplementedError()
-
-    def get_description_html5(self, data):
-        description = {
-            'description': '',
-            'input': '',
-            'output': '',
-            'note': '',
-        }
+        return description
         raise NotImplementedError()
 
     def get_objects(self, data):

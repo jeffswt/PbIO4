@@ -30,6 +30,18 @@ class OnlineJudge:
         as inserted in result.tags.*. """
         raise NotImplementedError()
 
+    def get_description_html5(self, data):
+        """ This gets the problem description in HTML5, as in
+        json_data.problem.HTML5. Return values must strictly follow the
+        guidelines. """
+        description = {
+            'description': '',
+            'input': '',
+            'output': '',
+            'note': '',
+        }
+        raise NotImplementedError()
+
     def get_description_markdown(self, data, h5_data):
         """ This gets the problem description in Markdown, as in
         json_data.problem.Markdown. Return values must strictly follow the
@@ -45,18 +57,6 @@ class OnlineJudge:
     def get_description_latex(self, data, h5_data):
         """ This gets the problem description in LaTeX, as in
         json_data.problem.LaTeX. Return values must strictly follow the
-        guidelines. """
-        description = {
-            'description': '',
-            'input': '',
-            'output': '',
-            'note': '',
-        }
-        raise NotImplementedError()
-
-    def get_description_html5(self, data):
-        """ This gets the problem description in HTML5, as in
-        json_data.problem.HTML5. Return values must strictly follow the
         guidelines. """
         description = {
             'description': '',
