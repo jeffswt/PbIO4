@@ -117,9 +117,35 @@ class BZOJ:
         raise NotImplementedError()
 
     def get_objects(self, data):
-        new_data = data
-        new_objects = []
-        return new_data, new_objects
+        img_idx = re.findall(
+            r'<img .*?src=".*?"[^>]*?>',
+            data)
+        objects = []
+        for img in img_idx:
+            img_path = common.findone(r'src="(.*?)"', img)
+            if not img_path:
+                continue
+            # Download image from remote server
+            url = self.domain + img_path
+            sessid = storage.get(self.engine, 'session_id')
+            cookies = { 'PHPSESSID': sessid }
+            req = common.request('get', url, cookies=cookies, stream=True)
+            img_data = req.raw.read()
+            # Converting into allowed formats and calculating hash
+            img_data = common.convert_image(img_data)
+            img_hash = common.sha256(img_data)
+            # Generating new name
+            n_name = img_hash[:8] + '.png'
+            # Replacing descriptor in HTML
+            data = data.replace(img, '<img src="%s">' % n_name)
+            # Inserting into objects directory
+            objects.append({
+                'name': n_name,
+                'hash': img_hash,
+                'data': img_data,
+            })
+            pass
+        return data, objects
 
     def login(self, username, password):
         # Retrieving session ID.
