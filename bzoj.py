@@ -106,8 +106,6 @@ class BZOJ(base.OnlineJudge):
                 r'（', r' (',
                 r'）', r') ',
                 r'(&lt;|&gt;)[ ]+=', r'\1=',
-                r'(&[lg]t;=?)', r' \1 ',
-                r'[ ]+', r' ',
                 r'\( ([1-9a-zA-Z&=,.;，。；])', r'(\1',
                 r'([1-9a-zA-Z&=,.;，。；]) \)', r'\1)',
                 r'\) ([,.;，。；])', r')\1',
@@ -173,14 +171,24 @@ class BZOJ(base.OnlineJudge):
                         continue
                     # Is really a math object. Processing.
                     match_res = common.consq_sub(match_res,
+                        # Arrows that are displayed with tricks
+                        r'<[\-]+>', r' \\longleftrightarrow ',
+                        r'<[=]+>', r' \\Longleftrightarrow ',
+                        r'[\-]+>', r' \\longrightarrow ',
+                        r'[=]+>', r' \\Longrightarrow ',
+                        r'<[\-]+', r' \\longleftarrow ',
+                        r'<[=]+', r' \\Longleftarrow ',
+                        # Standarized LaTeX comparison symbols
                         '>=', r' \\geq ',
                         '<=', r' \\leq ',
                         '>', r' \\gt ',
                         '<', r' \\lt ',
                         '≈', r' \\approx ',
+                        # Additional symbols
                         r'\*', r' \\times ',
                         r'\^([0-9a-zA-Z_])', r'^{\1}',
                         r'(\.\.\.+)', r' \\ldots ',
+                        # Miscellaneous, formatting
                         r'([+\-=])', r' \1 ',
                         r'^(.*)$', r' \1 ', # Making extra space at beginning.
                         r'[ ]+', ' ', # Removing places with too much spaces
