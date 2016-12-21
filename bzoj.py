@@ -1,39 +1,17 @@
 
 import datetime
 import re
-import requests
 import storage
 import time
+import common
 
 class BZOJ:
     """ 大视野在线测评, Hosted on http://www.lydsy.com/ """
     engine = 'BZOJ'
-    default_timeout = 3.0
 
     def __init__(self, bypass_proxy=False):
         self.domain = 'http://www.lydsy.com/JudgeOnline/'
-        self.session = requests.Session()
-        if bypass_proxy:
-            self.session.trust_env = False
         return
-
-    def request(self, function, *args, **kwargs):
-        connection_established = True
-        if function.lower() == 'get':
-            function = self.session.get
-        elif function.lower() == 'post':
-            function = self.session.post
-        else:
-            raise ValueError('Unsupported HTML operation.')
-        try:
-            req = function(*args, **kwargs, timeout=self.default_timeout,
-                headers={ 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0' })
-            req.encoding = 'utf-8'
-        except Exception as err:
-            connection_established = False
-        if not connection_established:
-            raise IOError('Remote server is unreachable.')
-        return req
 
     def check_problem_id(self, problem_id):
         convert_fail = False
@@ -54,7 +32,7 @@ class BZOJ:
             cookies = { 'PHPSESSID': sessid }
         else:
             cookies = { }
-        req = self.request('get', url, cookies=cookies)
+        req = common.request('get', url, cookies=cookies)
         # Matching valid section of the webpage.
         def consq_sub(text, *args):
             for i in range(0, int(len(args) / 2)):
@@ -73,30 +51,25 @@ class BZOJ:
         return text
 
     def split_raw_problem_data(self, raw_data):
-        def findone(pattern, string, otherwise=None, flags=0):
-            match = re.findall(pattern, string, flags)
-            if len(match) <= 0:
-                return otherwise
-            return match[0]
         # Processing document tags
-        title = findone(r'<center><h2>\d*?: (.*?)</h2>', raw_data)
-        time_limit = findone(r'<span class=green>Time Limit: </span>(\d+) Sec', raw_data)
-        memory_limit = findone(r'<span class=green>Memory Limit: </span>(\d+) MB', raw_data)
+        title = common.findone(r'<center><h2>\d*?: (.*?)</h2>', raw_data)
+        time_limit = common.findone(r'<span class=green>Time Limit: </span>(\d+) Sec', raw_data)
+        memory_limit = common.findone(r'<span class=green>Memory Limit: </span>(\d+) MB', raw_data)
         time_limit = int(time_limit) / 1.0
         memory_limit = int(memory_limit) * 1024 * 1024
         # Processing sample data. Inaccuracy guranteed when encountering multi
         # sample data. This is due to the various implementations of Definitions
         # when users upload the problem, and we cannot help.
-        s_input = findone(r'<h2>Sample Input</h2>.?<div class=content>.?<span class=sampledata>(.*?)</span>.?</div>', raw_data, '', flags=re.S)
-        s_output = findone(r'<h2>Sample Output</h2>.?<div class=content>.?<span class=sampledata>(.*?)</span>.?</div>', raw_data, '', flags=re.S)
+        s_input = common.findone(r'<h2>Sample Input</h2>.?<div class=content>.?<span class=sampledata>(.*?)</span>.?</div>', raw_data, '', flags=re.S)
+        s_output = common.findone(r'<h2>Sample Output</h2>.?<div class=content>.?<span class=sampledata>(.*?)</span>.?</div>', raw_data, '', flags=re.S)
         s_input = re.sub(r'<br( /|/)?>', r'', s_input)
         s_output = re.sub(r'<br( /|/)?>', r'', s_output)
         # Processing problem description. We only need to split it up, and nothing
         # more for us to do.
-        desc = findone(r'<h2>Description</h2><div class=content>(.*?)</div><h2>', raw_data, flags=re.S)
-        inp = findone(r'<h2>Input</h2><div class=content>(.*?)</div><h2>', raw_data, flags=re.S)
-        outp = findone(r'<h2>Output</h2><div class=content>(.*?)</div><h2>', raw_data, flags=re.S)
-        note = findone(r'<h2>HINT</h2><div class=content>(.*?)</div><h2>', raw_data, flags=re.S)
+        desc = common.findone(r'<h2>Description</h2><div class=content>(.*?)</div><h2>', raw_data, flags=re.S)
+        inp = common.findone(r'<h2>Input</h2><div class=content>(.*?)</div><h2>', raw_data, flags=re.S)
+        outp = common.findone(r'<h2>Output</h2><div class=content>(.*?)</div><h2>', raw_data, flags=re.S)
+        note = common.findone(r'<h2>HINT</h2><div class=content>(.*?)</div><h2>', raw_data, flags=re.S)
         # Building output
         result = {
             'tags': {
@@ -151,7 +124,7 @@ class BZOJ:
     def login(self, username, password):
         # Retrieving session ID.
         url = self.domain + 'loginpage.php'
-        req = self.request('get', url, cookies={'PHPSESSID': ''})
+        req = common.request('get', url, cookies={'PHPSESSID': ''})
         sessid = req.cookies.get('PHPSESSID', '')
         storage.set(self.engine, 'session_id', sessid)
         # Setting initial data.
@@ -163,7 +136,7 @@ class BZOJ:
         }
         # Requesting, with retrieved session ID
         cookies = { 'PHPSESSID': sessid }
-        req = self.request('post', url, cookies=cookies, data=data)
+        req = common.request('post', url, cookies=cookies, data=data)
         # Checking if login works
         ret = self.logged_in()
         # Setting user name into local storage.
@@ -180,7 +153,7 @@ class BZOJ:
         if not sessid:
             raise ValueError('User is not logged in.')
         cookies = { 'PHPSESSID': sessid }
-        req = self.request('get', url, cookies=cookies)
+        req = common.request('get', url, cookies=cookies)
         # Removing session ID from local storage
         storage.remove(self.engine, 'session_id')
         storage.remove(self.engine, 'user_id')
@@ -193,7 +166,7 @@ class BZOJ:
         url = self.domain
         sessid = storage.get(self.engine, 'session_id')
         cookies = { 'PHPSESSID': sessid }
-        req = self.request('get', url, cookies=cookies)
+        req = common.request('get', url, cookies=cookies)
         # Matching with RegEx
         if re.findall(pattern, req.text):
             return True
@@ -226,7 +199,7 @@ class BZOJ:
             'language': code_id,
             'source': str(source_code),
         }
-        req = self.request('post', url, cookies=cookies, data=data,
+        req = common.request('post', url, cookies=cookies, data=data,
             allow_redirects=False)
         # Checking if successfully submitted
         if req.status_code != 302:
@@ -271,7 +244,7 @@ class BZOJ:
         url = self.domain + 'status.php?top=%d' % submission_token
         sessid = storage.get(self.engine, 'session_id')
         cookies = { 'PHPSESSID': sessid }
-        req = self.request('get', url, cookies=cookies)
+        req = common.request('get', url, cookies=cookies)
         # Matching values
         pattern = r'^<tr align=center class=\'evenrow\'><td>(.*?)<td><a href=\'userinfo\.php\?user=.*?\'>(.*?)</a><td><a href=\'problem\.php\?id=.*?\'>(.*?)</a><td>(.*?)<td>(.*?)<td>(.*?)<td>(.*?)<td>(.*?) B<td>(.*?)</tr>'
         match = re.findall(pattern, req.text, re.M)
@@ -329,7 +302,7 @@ class BZOJ:
                 url = self.domain + 'ceinfo.php?sid=%d' % submission_token
                 sessid = storage.get(self.engine, 'session_id')
                 cookies = { 'PHPSESSID': sessid }
-                req = self.request('get', url, cookies=cookies)
+                req = common.request('get', url, cookies=cookies)
                 # Retrieve CE info
                 ce_info = re.findall(r'<pre>(.*?)</pre>', req.text, re.S)
                 if len(ce_info) <= 0:
@@ -346,7 +319,7 @@ class BZOJ:
             url = self.domain + 'submitpage.php?id=%s&sid=%d' % (result['problem_id'], submission_token)
             sessid = storage.get(self.engine, 'session_id')
             cookies = { 'PHPSESSID': sessid }
-            req = self.request('get', url, cookies=cookies)
+            req = common.request('get', url, cookies=cookies)
             # Retrieve CE info
             code = re.findall(r'<textarea.*?>(.*?)</textarea>', req.text, re.S)
             if len(code) <= 0:
