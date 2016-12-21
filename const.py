@@ -41,17 +41,20 @@ image_types = [
 
 # Supported submission status types
 submission_status_types = [
+    'Unknown',
     # Idle or status codes
-    'Pending'
+    'Pending',
     'Compiling',
     'Running',
     # Judge results
-    'Accepted',
-    'Presentation Error',
-    'Wrong Answer',
+    'Compile Error',
+    'Runtime Error',
     'Time Limit Exceeded',
     'Memory Limit Exceeded',
     'Output Limit Exceeded',
+    'Wrong Answer',
+    'Presentation Error',
+    'Accepted',
     # On special judges only
     'Hacked',
 ]
