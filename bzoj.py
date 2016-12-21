@@ -1,12 +1,14 @@
 
+import datetime
+import re
 import requests
 import storage
-import re
+import time
 
 class BZOJ:
     """ 大视野在线测评, Hosted on http://www.lydsy.com/ """
     engine = 'BZOJ'
-    default_timeout = 1.0
+    default_timeout = 3.0
 
     def __init__(self):
         self.domain = 'http://www.lydsy.com/JudgeOnline/'
@@ -226,5 +228,18 @@ class BZOJ:
         if int(match[0]) < submission_token:
             raise ValueError('The submission token is invalid.')
         # Generating result
-        raise NotImplementedError()
+        result = {
+            'token': submission_token,
+            'username': match[1],
+            'problem_id': match[2],
+            'time': int(re.sub(r' <font color=red>ms</font>', r'', match[5])) / 1000,
+            'memory': int(re.sub(r' <font color=red>kb</font>', r'', match[4])) * 1024,
+            'code_language': '', # Needs further processing
+            'code_length': int(match[7]),
+            'code': '', # Needs further processing
+            'status': (), # Needs further processing
+            'submit_time': datetime.datetime.fromtimestamp(
+                time.mktime(time.strptime(match[8], '%Y-%m-%d %H:%M:%S')) - 8 * 60 * 60
+                ).strftime('%Y-%m-%dT%H:%M:%S'),
+        }
     pass
