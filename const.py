@@ -135,6 +135,6 @@ sample_submission_json = {
     'status': (
         'Accepted', # Must follow guidelines.
         'All tests passed' # Customizable info.
-    )
+    ),
     'submit_time': '2009-04-16T11:40:58',
 }
