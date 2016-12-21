@@ -1,4 +1,5 @@
 
+import bs4
 import datetime
 import re
 import time
@@ -96,11 +97,27 @@ class BZOJ(base.OnlineJudge):
         return result
 
     def get_description_html5(self, data):
+        def h5_process(data):
+            if not data:
+                data = ''
+            # Some logical markers
+            data = common.consq_sub(data,
+                r'、', r', ', # Full width punctuations
+                r'（', r' (',
+                r'）', r') ',
+                r'(&lt;|&gt;)[ ]+=', r'\1=',
+                r'(&[lg]t;=?)', r' \1 ',
+                r'[ ]+', r' ',
+                r'\( ([1-9a-zA-Z&=,.;，。；])', r'(\1',
+                r'([1-9a-zA-Z&=,.;，。；]) \)', r'\1)',
+                r'\) ([,.;，。；])', r')\1',
+            )
+            return data
         description = {
-            'description': '',
-            'input': '',
-            'output': '',
-            'note': '',
+            'description': h5_process(data['description']),
+            'input': h5_process(data['input']),
+            'output': h5_process(data['output']),
+            'note': h5_process(data['note']),
         }
         return description
         raise NotImplementedError()
