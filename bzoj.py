@@ -62,7 +62,9 @@ class BZOJ:
             return text
         text = consq_sub(req.text,
             r'\r', r'', # Remove inproper line endings
+            r'\u3000', r'  ', # Change full-width spaces to two half-width ones
             r'\n[ \t]*', r'\n', # Remove padding before line
+            r'[ \t]*\n', r'\n', # Remove padding after line
         ) # Subsequently remove those.
         # Remove the end
         text = re.sub(r'<div class=content><p><a href=.*?\[<a href=\'bbs\.php\?id=.*?\'>Discuss</a>\](.|\n)*$', r'', text)
@@ -71,7 +73,48 @@ class BZOJ:
         return text
 
     def split_raw_problem_data(self, raw_data):
-        raise NotImplementedError()
+        def findone(pattern, string, otherwise=None, flags=0):
+            match = re.findall(pattern, string, flags)
+            if len(match) <= 0:
+                return otherwise
+            return match[0]
+        # Processing document tags
+        title = findone(r'<center><h2>\d*?: (.*?)</h2>', raw_data)
+        time_limit = findone(r'<span class=green>Time Limit: </span>(\d+) Sec', raw_data)
+        memory_limit = findone(r'<span class=green>Memory Limit: </span>(\d+) MB', raw_data)
+        time_limit = int(time_limit) / 1.0
+        memory_limit = int(memory_limit) * 1024 * 1024
+        # Processing sample data. Inaccuracy guranteed when encountering multi
+        # sample data. This is due to the various implementations of Definitions
+        # when users upload the problem, and we cannot help.
+        s_input = findone(r'<h2>Sample Input</h2>.?<div class=content>.?<span class=sampledata>(.*?)</span>.?</div>', raw_data, '', flags=re.S)
+        s_output = findone(r'<h2>Sample Output</h2>.?<div class=content>.?<span class=sampledata>(.*?)</span>.?</div>', raw_data, '', flags=re.S)
+        s_input = re.sub(r'<br( /|/)?>', r'', s_input)
+        s_output = re.sub(r'<br( /|/)?>', r'', s_output)
+        # Processing problem description. We only need to split it up, and nothing
+        # more for us to do.
+        desc = findone(r'<h2>Description</h2><div class=content>(.*?)</div><h2>', raw_data, flags=re.S)
+        inp = findone(r'<h2>Input</h2><div class=content>(.*?)</div><h2>', raw_data, flags=re.S)
+        outp = findone(r'<h2>Output</h2><div class=content>(.*?)</div><h2>', raw_data, flags=re.S)
+        note = findone(r'<h2>HINT</h2><div class=content>(.*?)</div><h2>', raw_data, flags=re.S)
+        # Building output
+        result = {
+            'tags': {
+                'title': title,
+                'time_limit': time_limit,
+                'memory_limit': memory_limit,
+            },
+            'description': desc,
+            'input': inp,
+            'output': outp,
+            'note': note,
+            'sample_data': [ {
+                'input': s_input,
+                'output': s_output
+            } ],
+        }
+        # Finished building, returning result
+        return result
 
     def get_description_markdown(self, data, h5_data):
         description = {
@@ -314,9 +357,3 @@ class BZOJ:
         # Submission status retrieval succeeded.
         return result
     pass
-
-b = BZOJ()
-s = b.get_raw_problem_data(1010)
-f = open('a.html', 'w', encoding='utf8')
-f.write(s)
-f.close()
