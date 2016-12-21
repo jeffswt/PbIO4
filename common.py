@@ -13,9 +13,17 @@ def findone(pattern, string, otherwise=None, flags=0):
         return otherwise
     return match[0]
 
+def consq_replace(text, *args):
+    for i in range(0, int(len(args) / 2)):
+        text = text.replace(args[i*2], args[i*2+1])
+    return text
+
 def consq_sub(text, *args):
     for i in range(0, int(len(args) / 2)):
-        text = re.sub(args[i*2], args[i*2+1], text)
+        try:
+            text = re.sub(args[i*2], args[i*2+1], text)
+        except:
+            raise TypeError('Error while subtituting string: "%s" -> "%s" in "%s"' % (args[i*2], args[i*2+1], text))
     return text
 
 def sha256(binary_in):
