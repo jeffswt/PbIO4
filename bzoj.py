@@ -36,11 +36,7 @@ class BZOJ(base.OnlineJudge):
             cookies = { }
         req = common.request('get', url, cookies=cookies)
         # Matching valid section of the webpage.
-        def consq_sub(text, *args):
-            for i in range(0, int(len(args) / 2)):
-                text = re.sub(args[i*2], args[i*2+1], text)
-            return text
-        text = consq_sub(req.text,
+        text = common.consq_sub(req.text,
             r'\r', r'', # Remove inproper line endings
             r'\u3000', r'  ', # Change full-width spaces to two half-width ones
             r'\n[ \t]*', r'\n', # Remove padding before line
@@ -64,8 +60,16 @@ class BZOJ(base.OnlineJudge):
         # when users upload the problem, and we cannot help.
         s_input = common.findone(r'<h2>Sample Input</h2>.?<div class=content>.?<span class=sampledata>(.*?)</span>.?</div>', raw_data, '', flags=re.S)
         s_output = common.findone(r'<h2>Sample Output</h2>.?<div class=content>.?<span class=sampledata>(.*?)</span>.?</div>', raw_data, '', flags=re.S)
-        s_input = re.sub(r'<br( /|/)?>', r'', s_input)
-        s_output = re.sub(r'<br( /|/)?>', r'', s_output)
+        s_input = common.consq_sub(s_input,
+            r'<br( /|/)?>', r'',
+            r'\n[ \t]*', r'\n',
+            r'[ \t]*\n', r'\n',
+        )
+        s_output = common.consq_sub(s_output,
+            r'<br( /|/)?>', r'',
+            r'\n[ \t]*', r'\n',
+            r'[ \t]*\n', r'\n',
+        )
         # Processing problem description. We only need to split it up, and nothing
         # more for us to do.
         desc = common.findone(r'<h2>Description</h2><div class=content>(.*?)</div><h2>', raw_data, flags=re.S)
