@@ -14,6 +14,21 @@ class BZOJ:
         self.domain = 'http://www.lydsy.com/JudgeOnline/'
         return
 
+    def request(self, function, *args, **kwargs):
+        connection_established = True
+        if function.lower() == 'get':
+            function = requests.get
+        elif function.lower() == 'post':
+            function = requests.post
+        try:
+            req = function(*args, **kwargs, timeout=self.default_timeout)
+            req.encoding = 'utf-8'
+        except Exception as err:
+            connection_established = False
+        if not connection_established:
+            raise IOError('Remote server is unreachable.')
+        return req
+
     def check_problem_id(self, problem_id):
         convert_fail = False
         try:
@@ -33,15 +48,7 @@ class BZOJ:
             cookies = { 'PHPSESSID': sessid }
         else:
             cookies = { }
-        # Safely request to remote server
-        connection_established = True
-        try:
-            req = requests.get(url, cookies=cookies, timeout=self.default_timeout)
-            req.encoding = 'utf-8'
-        except Exception as err:
-            connection_established = False
-        if not connection_established:
-            raise IOError('Remote server is unreachable.')
+        req = self.request('get', url, cookies=cookies)
         # Matching valid section of the webpage.
         def consq_sub(text, *args):
             for i in range(0, int(len(args) / 2)):
@@ -96,14 +103,7 @@ class BZOJ:
             'submit': 'Submit',
         }
         # Requesting, without previous session ID
-        # Safely request to remote server
-        connection_established = True
-        try:
-            req = requests.post(url, data=data, timeout=self.default_timeout)
-        except Exception as err:
-            connection_established = False
-        if not connection_established:
-            raise IOError('Remote server is unreachable.')
+        req = self.request('post', url, data=data)
         # Retrieving and setting session ID.
         sessid = req.cookies.get('PHPSESSID', '')
         storage.set(self.engine, 'session_id', sessid)
@@ -123,14 +123,7 @@ class BZOJ:
         if not sessid:
             raise ValueError('User is not logged in.')
         cookies = { 'PHPSESSID': sessid }
-        # Safely request to remote server
-        connection_established = True
-        try:
-            req = requests.get(url, cookies=cookies, timeout=self.default_timeout)
-        except Exception as err:
-            connection_established = False
-        if not connection_established:
-            raise IOError('Remote server is unreachable.')
+        req = self.request('get', url, cookies=cookies)
         # Removing session ID from local storage
         storage.remove(self.engine, 'session_id')
         storage.remove(self.engine, 'user_id')
@@ -143,14 +136,7 @@ class BZOJ:
         url = self.domain
         sessid = storage.get(self.engine, 'session_id')
         cookies = { 'PHPSESSID': sessid }
-        # Safely request to remote server
-        connection_established = True
-        try:
-            req = requests.get(url, cookies=cookies, timeout=self.default_timeout)
-        except Exception as err:
-            connection_established = False
-        if not connection_established:
-            raise IOError('Remote server is unreachable.')
+        req = self.request('get', url, cookies=cookies)
         # Matching with RegEx
         if re.findall(pattern, req.text):
             return True
@@ -183,15 +169,8 @@ class BZOJ:
             'language': code_id,
             'source': str(source_code),
         }
-        # Safely request to remote server
-        connection_established = True
-        try:
-            req = requests.post(url, cookies=cookies, data=data,
-                allow_redirects=False, timeout=self.default_timeout)
-        except Exception as err:
-            connection_established = False
-        if not connection_established:
-            raise IOError('Remote server is unreachable.')
+        req = self.request('post', url, cookies=cookies, data=data,
+            allow_redirects=False)
         # Checking if successfully submitted
         if req.status_code != 302:
             # Retrieve error information
@@ -235,14 +214,7 @@ class BZOJ:
         url = self.domain + 'status.php?top=%d' % submission_token
         sessid = storage.get(self.engine, 'session_id')
         cookies = { 'PHPSESSID': sessid }
-        # Safely request to remote server
-        connection_established = True
-        try:
-            req = requests.get(url, cookies=cookies, timeout=self.default_timeout)
-        except Exception as err:
-            connection_established = False
-        if not connection_established:
-            raise IOError('Remote server is unreachable.')
+        req = self.request('get', url, cookies=cookies)
         # Matching values
         pattern = r'^<tr align=center class=\'evenrow\'><td>(.*?)<td><a href=\'userinfo\.php\?user=.*?\'>(.*?)</a><td><a href=\'problem\.php\?id=.*?\'>(.*?)</a><td>(.*?)<td>(.*?)<td>(.*?)<td>(.*?)<td>(.*?) B<td>(.*?)</tr>'
         match = re.findall(pattern, req.text, re.M)
@@ -300,14 +272,7 @@ class BZOJ:
                 url = self.domain + 'ceinfo.php?sid=%d' % submission_token
                 sessid = storage.get(self.engine, 'session_id')
                 cookies = { 'PHPSESSID': sessid }
-                # Safely request to remote server
-                connection_established = True
-                try:
-                    req = requests.get(url, cookies=cookies, timeout=self.default_timeout)
-                except Exception as err:
-                    connection_established = False
-                if not connection_established:
-                    raise IOError('Remote server is unreachable.')
+                req = self.request('get', url, cookies=cookies)
                 # Retrieve CE info
                 ce_info = re.findall(r'<pre>(.*?)</pre>', req.text, re.S)
                 if len(ce_info) <= 0:
@@ -324,14 +289,7 @@ class BZOJ:
             url = self.domain + 'submitpage.php?id=%s&sid=%d' % (result['problem_id'], submission_token)
             sessid = storage.get(self.engine, 'session_id')
             cookies = { 'PHPSESSID': sessid }
-            # Safely request to remote server
-            connection_established = True
-            try:
-                req = requests.get(url, cookies=cookies, timeout=self.default_timeout)
-            except Exception as err:
-                connection_established = False
-            if not connection_established:
-                raise IOError('Remote server is unreachable.')
+            req = self.request('get', url, cookies=cookies)
             # Retrieve CE info
             code = re.findall(r'<textarea.*?>(.*?)</textarea>', req.text, re.S)
             if len(code) <= 0:
