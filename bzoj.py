@@ -6,6 +6,7 @@ import re
 class BZOJ:
     """ 大视野在线测评, Hosted on http://www.lydsy.com/ """
     engine = 'BZOJ'
+    default_timeout = 1.0
 
     def __init__(self):
         self.domain = 'http://www.lydsy.com/JudgeOnline/'
@@ -68,7 +69,14 @@ class BZOJ:
             'submit': 'Submit',
         }
         # Requesting, without previous session ID
-        req = requests.post(url, data=data)
+        # Safely request to remote server
+        connection_established = True
+        try:
+            req = requests.post(url, data=data, timeout=self.default_timeout)
+        except requests.exceptions.ConnectionError as err:
+            connection_established = False
+        if not connection_established:
+            raise IOError('Remote server is unreachable.')
         # Retrieving and setting session ID.
         sessid = req.cookies.get('PHPSESSID', '')
         storage.set(self.engine, 'session_id', sessid)
@@ -85,8 +93,17 @@ class BZOJ:
         # Sending request to remote.
         url = self.domain + 'logout.php'
         sessid = storage.get(self.engine, 'session_id')
+        if not sessid:
+            raise ValueError('User is not logged in.')
         cookies = { 'PHPSESSID': sessid }
-        req = requests.get(url, cookies=cookies)
+        # Safely request to remote server
+        connection_established = True
+        try:
+            req = requests.get(url, cookies=cookies, timeout=self.default_timeout)
+        except requests.exceptions.ConnectionError as err:
+            connection_established = False
+        if not connection_established:
+            raise IOError('Remote server is unreachable.')
         # Removing session ID from local storage
         storage.remove(self.engine, 'session_id')
         storage.remove(self.engine, 'user_id')
@@ -99,7 +116,14 @@ class BZOJ:
         url = self.domain
         sessid = storage.get(self.engine, 'session_id')
         cookies = { 'PHPSESSID': sessid }
-        req = requests.get(url, cookies=cookies)
+        # Safely request to remote server
+        connection_established = True
+        try:
+            req = requests.get(url, cookies=cookies, timeout=self.default_timeout)
+        except requests.exceptions.ConnectionError as err:
+            connection_established = False
+        if not connection_established:
+            raise IOError('Remote server is unreachable.')
         # Matching with RegEx
         if re.findall(pattern, req.text):
             return True
@@ -132,8 +156,15 @@ class BZOJ:
             'language': code_id,
             'source': str(source_code),
         }
-        req = requests.post(url, cookies=cookies, data=data,
-            allow_redirects=False) # Trick to prevent auto redirection.
+        # Safely request to remote server
+        connection_established = True
+        try:
+            req = requests.post(url, cookies=cookies, data=data,
+                allow_redirects=False, timeout=self.default_timeout)
+        except requests.exceptions.ConnectionError as err:
+            connection_established = False
+        if not connection_established:
+            raise IOError('Remote server is unreachable.')
         # Checking if successfully submitted
         if req.status_code != 302:
             raise PermissionError('Problem submission for problem "%s" failed.' % problem_id)
@@ -155,5 +186,6 @@ class BZOJ:
         return sub_id
 
     def get_submission_status(self, submission_token):
+
         raise NotImplementedError()
     pass
