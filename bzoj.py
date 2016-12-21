@@ -132,18 +132,21 @@ class BZOJ(base.OnlineJudge):
                 if prev_str:
                     prev_str.string = re.sub(r'^[ \n]*', r'', prev_str.string)
                     prev_str = prev_str.string
+                else:
+                    prev_str = ''
                 if next_str:
                     next_str.string = re.sub(r'^[ \n]*', r'', next_str.string)
                     next_str = next_str.string
+                else:
+                    next_str = ''
                 # Pre-define. This is necessary.
-                if len(next_str) < 10:
-                    cur_brk.extract()
-                    continue
                 do_remove = True
                 len_a = common.get_string_width(prev_str)
                 len_b = common.get_string_width(next_str)
                 if len_a < len_b * 0.802:
                     do_remove = False
+                if len_b < 60 and len_b > len(next_str) * 0.65:
+                    do_remove = True
                 if do_remove:
                     cur_brk.extract()
                 pass
