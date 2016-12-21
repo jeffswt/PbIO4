@@ -3,6 +3,10 @@
 for a set of default and allowed values. This is only for demonstration purposes
 only, and may change from time to time. """
 
+################################################################################
+#  Definitions on allowed data and types
+################################################################################
+
 # Allowed language types, on most OJs
 language_types = [
     'C', # Enforce ISO C99 dialect
@@ -35,8 +39,29 @@ image_types = [
     'PNG', # Portable Network Graphics
 ]
 
+# Supported submission status types
+submission_status_types = [
+    # Idle or status codes
+    'Pending'
+    'Compiling',
+    'Running',
+    # Judge results
+    'Accepted',
+    'Presentation Error',
+    'Wrong Answer',
+    'Time Limit Exceeded',
+    'Memory Limit Exceeded',
+    'Output Limit Exceeded',
+    # On special judges only
+    'Hacked',
+]
+
+################################################################################
+#  Samples
+################################################################################
+
 # A sample JSON file for class developers.
-default_json = {
+sample_json = {
     'metadata': {
         'engine': 'Codeforces',
         'id': 'Problemset.746A',
@@ -95,19 +120,18 @@ default_json = {
     ],
 }
 
-# Supported submission status types
-submission_status_types = [
-    # Idle or status codes
-    'Pending'
-    'Compiling',
-    'Running',
-    # Judge results
-    'Accepted',
-    'Presentation Error',
-    'Wrong Answer',
-    'Time Limit Exceeded',
-    'Memory Limit Exceeded',
-    'Output Limit Exceeded',
-    # On special judges only
-    'Hacked',
-]
+sample_submission_json = {
+    'token': 1048576,
+    'username': 'root',
+    'problem_id': '1000',
+    'time': 0.420,
+    'memory': 524288,
+    'code_language': 'C++',
+    'code_length': 12,
+    'code': 'int main(){}',
+    'status': (
+        'Accepted', # Must follow guidelines.
+        'All tests passed' # Customizable info.
+    )
+    'submit_time': '2009-04-16T11:40:58',
+}
