@@ -29,7 +29,7 @@ class OnlineJudge:
         as inserted in result.tags.*. """
         raise NotImplementedError()
 
-    def get_description_markdown(self, data):
+    def get_description_markdown(self, data, h5_data):
         """ This gets the problem description in Markdown, as in
         json_data.problem.Markdown. Return values must strictly follow the
         guidelines. """
@@ -41,7 +41,7 @@ class OnlineJudge:
         }
         raise NotImplementedError()
 
-    def get_description_latex(self, data):
+    def get_description_latex(self, data, h5_data):
         """ This gets the problem description in LaTeX, as in
         json_data.problem.LaTeX. Return values must strictly follow the
         guidelines. """
@@ -92,9 +92,9 @@ class OnlineJudge:
             'output': '',
             'note': '',
         }
-        dat_md = self.get_description_markdown(split_data) or dat_empty
-        dat_ltx = self.get_description_latex(split_data) or dat_empty
         dat_h5 = self.get_description_html5(split_data) or dat_empty
+        dat_md = self.get_description_markdown(split_data, dat_h5) or dat_empty
+        dat_ltx = self.get_description_latex(split_data, dat_h5) or dat_empty
         # Building objected output
         default_json = {
             'metadata': {
@@ -108,10 +108,10 @@ class OnlineJudge:
                 },
             },
             'problem': {
+                'HTML': raw_data,
+                'HTML5': dat_h5,
                 'Markdown': dat_md,
                 'LaTeX': dat_ltx,
-                'HTML5': dat_h5,
-                'HTML': raw_data,
             },
             'sample_data': split_data.get('sample_data', []),
             'objects': objects,

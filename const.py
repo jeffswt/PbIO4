@@ -78,6 +78,17 @@ sample_json = {
         },
     },
     'problem': {
+        # Directly stripped off the entire context from online judge. If was
+        # converted from LaTeX or Markdown, this can be the same as HTML5, but
+        # a combined one.
+        'HTML': '<h2>Description</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>\n\n<h2>Input</h2>\n<p>The <b>first line</b> contains the positive integer <span class="tex-span"><i>a</i></span> (<span class="tex-span">1 ≤ <i>a</i> ≤ 1000</span>) — the number of lemons Nikolay has. </p>\n\n<h2>Output</h2>\n<p>Print <i>the maximum</i> total number of lemons, apples and pears from which Nikolay can cook the compote.</p>\n\n<h2>Note</h2>\n<p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>',
+        # Use MathJax extension for math displays
+        'HTML5': {
+            'description': '<h2>Lorem Ipsum</h2><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>',
+            'input': '<p>The <b>first line</b> contains the positive integer <span class="math inline">a (1 \\leq a \\leq 1000)</span> - the number of lemons Nikolay has. </p>',
+            'output': '<p>Print <i>the maximum</i> total number of lemons, apples and pears from which Nikolay can cook the compote.</p>',
+            'note': '<p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>',
+        },
         # GitHub flavoured Markdown, without line-end breaks. Support MathJax extensions.
         'Markdown': {
             'description': '# Lorem Ipsum\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
@@ -92,17 +103,6 @@ sample_json = {
             'output': 'Print \\textit{the maximum} total number of lemons, apples and pears from which Nikolay can cook the compote.',
             'note': 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
         },
-        # Use MathJax extension for math displays
-        'HTML5': {
-            'description': '<h2>Lorem Ipsum</h2><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>',
-            'input': '<p>The <b>first line</b> contains the positive integer <span class="math inline">a (1 \\leq a \\leq 1000)</span> - the number of lemons Nikolay has. </p>',
-            'output': '<p>Print <i>the maximum</i> total number of lemons, apples and pears from which Nikolay can cook the compote.</p>',
-            'note': '<p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>',
-        },
-        # Directly stripped off the entire context from online judge. If was
-        # converted from LaTeX or Markdown, this can be the same as HTML5, but
-        # a combined one.
-        'HTML': '<h2>Description</h2>\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>\n\n<h2>Input</h2>\n<p>The <b>first line</b> contains the positive integer <span class="tex-span"><i>a</i></span> (<span class="tex-span">1 ≤ <i>a</i> ≤ 1000</span>) — the number of lemons Nikolay has. </p>\n\n<h2>Output</h2>\n<p>Print <i>the maximum</i> total number of lemons, apples and pears from which Nikolay can cook the compote.</p>\n\n<h2>Note</h2>\n<p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>',
     },
     'sample_data': [
         {

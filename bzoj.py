@@ -73,7 +73,7 @@ class BZOJ:
     def split_raw_problem_data(self, raw_data):
         raise NotImplementedError()
 
-    def get_description_markdown(self, data):
+    def get_description_markdown(self, data, h5_data):
         description = {
             'description': '',
             'input': '',
@@ -82,7 +82,7 @@ class BZOJ:
         }
         raise NotImplementedError()
 
-    def get_description_latex(self, data):
+    def get_description_latex(self, data, h5_data):
         description = {
             'description': '',
             'input': '',
