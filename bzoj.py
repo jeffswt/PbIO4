@@ -112,6 +112,20 @@ class BZOJ(base.OnlineJudge):
                 r'([1-9a-zA-Z&=,.;，。；]) \)', r'\1)',
                 r'\) ([,.;，。；])', r')\1',
             )
+            # Manipulate the rest in bs4
+            bs = bs4.BeautifulSoup(data or '', 'html5lib')
+            m_char = r'[a-zA-Z0-9!&|+\-=^_*/\\%., <>()\[\]\{\}]' # Math characters
+            m_only_char = ' ,.()[]{}!'
+            sat_strs = bs.find_all(string=re.compile(r'%s+' % m_char))
+            for cur_block in sat_strs:
+                r_pat = re.compile(r'(%s+)' % m_char)
+                o_spl = r_pat.split(cur_block)
+                # Removing this blob.
+                cur_block.extract()
+                print(o_spl)
+            # Prettify output
+            data = '\n'.join(str(i) for i in bs.body.find_all('p'))
+            # print(data)
             return data
         description = {
             'description': h5_process(data['description']),
