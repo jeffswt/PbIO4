@@ -242,4 +242,10 @@ class BZOJ:
                 time.mktime(time.strptime(match[8], '%Y-%m-%d %H:%M:%S')) - 8 * 60 * 60
                 ).strftime('%Y-%m-%dT%H:%M:%S'),
         }
+        # Processing code language
+        lang_map = { 'C': 'C', 'C++': 'C++', 'Pascal': 'Pascal', 'Java': 'Java',
+            'Python': 'Python3' }
+        match[6] = re.sub(r'<a target=_blank href=showsource\.php\?id=.*?>(.*?)</a>/<a target=_self href=\"submitpage\.php\?id=.*?&sid=.*?\">Edit</a>',
+            r'\1', match[6])
+        result['code_language'] = lang_map[match[6]]
     pass
