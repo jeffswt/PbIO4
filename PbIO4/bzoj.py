@@ -4,9 +4,9 @@ import datetime
 import re
 import time
 
-import base
-import storage
-import common
+from . import base
+from . import storage
+from . import common
 
 class BZOJ(base.OnlineJudge):
     """ 大视野在线测评, Hosted on http://www.lydsy.com/ """
@@ -486,16 +486,3 @@ class BZOJ(base.OnlineJudge):
         # Submission status retrieval succeeded.
         return result
     pass
-
-b = BZOJ()
-h = b.get_raw_problem_data(1001)
-h, obj = b.get_objects(h)
-s = b.split_raw_problem_data(h)
-print(s, '\n\n\n')
-# dec = s['description']
-# dec = re.sub('<br />', '<br>', dec)
-# bs = bs4.BeautifulSoup(dec, 'html5lib')
-# ph = '\n'.join(i.prettify() for i in bs.body.find_all('p'))
-h5 = b.get_description_html5(s)
-for i in h5:
-    print('================================\n',i,'\n',h5[i],'\n')
