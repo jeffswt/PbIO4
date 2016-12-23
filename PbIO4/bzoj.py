@@ -113,6 +113,9 @@ class BZOJ(base.OnlineJudge):
             )
             # Manipulate the rest in bs4
             bs = bs4.BeautifulSoup(data or '', 'html5lib')
+            # For compatibility
+            for div in bs.find_all('p'):
+                div.name = 'div'
             # Removing abstruse formats
             for span in bs.find_all('span'):
                 if 'font' not in span['style'] and 'color' not in span['style']:
@@ -206,12 +209,14 @@ class BZOJ(base.OnlineJudge):
             for s_str in bs.find_all(string=re.compile(r'.*')):
                 s_str.string = re.sub(r'\n', r'', s_str.string)
             # Prettify output
-            data = '\n'.join(str(i) for i in bs.body.find_all('p'))
-            data = data.replace('\n', '').replace('<br/>', '</p><p>')
+            data = '\n'.join(str(i) for i in bs.body.find_all('div'))
+            data = data.replace('\n', '').replace('<br/>', '</div><div>')\
+                .replace('<div></div>', '').replace('<div> </div>', '')
+            print(data, '\n\n\n\n\n\n')
             # Re-work in bs4 and re-write output.
             bs = bs4.BeautifulSoup(data, 'html5lib')
-            data = '\n'.join(str(i) for i in bs.body.find_all('p'))
-            # print(data)
+            print(bs, '\n\n\n\n\n\n')
+            data = '\n'.join(str(i) for i in bs.body.find_all('div'))
             return data
         description = {
             'description': h5_process(data['description']),
@@ -241,7 +246,7 @@ class BZOJ(base.OnlineJudge):
         return description
         raise NotImplementedError()
 
-    def get_objects(self, data):
+    def get_objects__(self, data):
         img_idx = re.findall(
             r'<img .*?src=".*?"[^>]*?>',
             data)
@@ -481,3 +486,16 @@ class BZOJ(base.OnlineJudge):
         # Submission status retrieval succeeded.
         return result
     pass
+
+b = BZOJ()
+h = b.get_raw_problem_data(1001)
+h, obj = b.get_objects(h)
+s = b.split_raw_problem_data(h)
+print(s, '\n\n\n')
+# dec = s['description']
+# dec = re.sub('<br />', '<br>', dec)
+# bs = bs4.BeautifulSoup(dec, 'html5lib')
+# ph = '\n'.join(i.prettify() for i in bs.body.find_all('p'))
+h5 = b.get_description_html5(s)
+for i in h5:
+    print('================================\n',i,'\n',h5[i],'\n')

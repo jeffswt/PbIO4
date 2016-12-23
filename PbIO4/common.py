@@ -67,7 +67,11 @@ def request(function, *args, encoding='utf-8', **kwargs):
 
 def convert_image(data):
     hfile = io.BytesIO(data)
-    himage = PIL.Image.open(hfile)
+    try:
+        himage = PIL.Image.open(hfile)
+    except Exception as err:
+        print(data)
+        raise err
     hfileout = io.BytesIO()
     himage.save(hfileout, format='png')
     hfileout.seek(0)
