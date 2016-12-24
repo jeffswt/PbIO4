@@ -17,12 +17,10 @@ class BZOJ(base.OnlineJudge):
         return
 
     def check_problem_id(self, problem_id):
-        convert_fail = False
         try:
             problem_id = int(problem_id)
+            assert problem_id >= 1000
         except Exception as err:
-            convert_fail = True
-        if convert_fail or problem_id < 1000:
             raise ValueError('The problem ID "%s" is evidently invalid.' % problem_id)
         return problem_id
 
@@ -333,16 +331,13 @@ class BZOJ(base.OnlineJudge):
         problem_id = self.check_problem_id(problem_id)
         # Translating standard language to HustOJ language IDs
         code_id = -1
-        if code_language == 'C':
-            code_id = 0
-        elif code_language == 'C++':
-            code_id = 1
-        elif code_language == 'Pascal':
-            code_id = 2
-        elif code_language == 'Java':
-            code_id = 3
-        elif code_language == 'Python':
-            code_id = 6
+        code_id = {
+            'C': 0,
+            'C++': 1,
+            'Pascal': 2,
+            'Java': 3,
+            'Python': 6,
+        }.get(code_language, -1)
         # Unsupported language
         if code_id == -1:
             raise ValueError('Language "%s" is not supported on BZOJ.')
