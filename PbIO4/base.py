@@ -147,7 +147,7 @@ class OnlineJudge:
     #  Submissions related
     ############################################################################
 
-    def submit_code(self, problem_id, source_code, code_language):
+    def submit_code(self, problem_id, code_language, source_code):
         """ Submits code to remote server, and returns the handle to this
         specif submission, if remote server supports this function. """
         raise NotImplementedError()
