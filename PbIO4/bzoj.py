@@ -276,6 +276,10 @@ class BZOJ(base.OnlineJudge):
         return data, objects
 
     def login(self, username, password):
+        # Checking if already logged in with this account.
+        if storage.get(self.engine, 'user_id') == username:
+            if self.logged_in():
+                return True
         # Retrieving session ID.
         url = self.domain + 'loginpage.php'
         req = common.request('get', url, cookies={'PHPSESSID': ''})
