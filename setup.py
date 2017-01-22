@@ -7,7 +7,7 @@ def readme():
 
 setup(
     name = 'PbIO4',
-    version = '0.1.70',
+    version = '0.1.75',
     description = 'Python-based Interface for Online-Judges.',
     long_description = 'Interace with Online Judges with one set of API in Python.',
     classifiers = [

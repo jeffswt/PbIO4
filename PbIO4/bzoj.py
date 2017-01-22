@@ -3,6 +3,7 @@ import bs4
 import datetime
 import re
 import time
+import requests
 
 from . import base
 from . import storage
@@ -334,7 +335,6 @@ class BZOJ(base.OnlineJudge):
     def submit_code(self, problem_id, code_language, source_code):
         problem_id = self.check_problem_id(problem_id)
         # Translating standard language to HustOJ language IDs
-        code_id = -1
         code_id = {
             'C': 0,
             'C++': 1,
