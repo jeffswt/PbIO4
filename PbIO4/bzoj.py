@@ -406,13 +406,17 @@ class BZOJ(base.OnlineJudge):
         if int(match[0]) < submission_token:
             raise ValueError('The submission token is invalid.')
         # Generating result
+        r_time = re.sub(r' <font color=red>ms</font>', r'', match[5])
+        r_memory = re.sub(r' <font color=red>kb</font>', r'', match[4])
+        r_time = r_time if r_time.isdecimal() else 0
+        r_memory = r_memory if r_memory.isdecimal() else 0
         result = {
             'token': submission_token,
             'username': match[1],
             'problem_id': match[2],
-            'time': int(re.sub(r' <font color=red>ms</font>', r'', match[5])) / 1000,
-            'memory': int(re.sub(r' <font color=red>kb</font>', r'', match[4])) * 1024,
-            'code_language': '', # Needs further processing
+            'time': int(r_time) / 1000,
+            'memory': int(r_memory) * 1024,
+            'code_language': '', # Needs further processing, if required
             'code_length': int(match[7]),
             'code': '', # Needs further processing
             'status': (), # Needs further processing
