@@ -152,7 +152,7 @@ class OnlineJudge:
         specif submission, if remote server supports this function. """
         raise NotImplementedError()
 
-    def get_submission_status(self, submission_token):
+    def get_submission_status(self, submission_token, download_code=False):
         """ Returns a valid submission status, as defined in the guidelines.
         Must pass in a valid submission token. """
         raise NotImplementedError()

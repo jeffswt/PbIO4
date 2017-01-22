@@ -382,7 +382,7 @@ class BZOJ(base.OnlineJudge):
             raise RuntimeError('Unable to retrieve submission token for problem submission.')
         return sub_id
 
-    def get_submission_status(self, submission_token):
+    def get_submission_status(self, submission_token, download_code = False):
         # Converting submission token.
         convert_fail = False
         try:
@@ -470,18 +470,20 @@ class BZOJ(base.OnlineJudge):
             pass
         result['status'] = status
         # Retrieving source code
-        if result['username'] == storage.get(self.engine, 'user_id'):
-            url = self.domain + 'submitpage.php?id=%s&sid=%d' % (result['problem_id'], submission_token)
-            sessid = storage.get(self.engine, 'session_id')
-            cookies = { 'PHPSESSID': sessid }
-            req = common.request('get', url, cookies=cookies)
-            # Retrieve CE info
-            code = re.findall(r'<textarea.*?>(.*?)</textarea>', req.text, re.S)
-            if len(code) <= 0:
-                code = ''
-            else:
-                code = code[0]
-            result['code'] = code
+        if download_code:
+            if result['username'] == storage.get(self.engine, 'user_id'):
+                url = self.domain + 'submitpage.php?id=%s&sid=%d' % (result['problem_id'], submission_token)
+                sessid = storage.get(self.engine, 'session_id')
+                cookies = { 'PHPSESSID': sessid }
+                req = common.request('get', url, cookies=cookies)
+                # Retrieve CE info
+                code = re.findall(r'<textarea.*?>(.*?)</textarea>', req.text, re.S)
+                if len(code) <= 0:
+                    code = ''
+                else:
+                    code = code[0]
+                result['code'] = code
+            pass
         # Submission status retrieval succeeded.
         return result
     pass
